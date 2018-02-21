@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript">
+	var webSocket = new WebSocket("ws://localhost:8080/ChatRoom/chat");
+	var sendMsg = function() {
+		var inputElement = document.getElementById('msg');
+		//send the message
+		webSocket.send(inputElement.value);
+		inputElement.value = "";
+	};
+	var send = function(event) {
+		//type "Enter"
+		if (event.KeyCode == 13) {
+			sendMsg();
+		}
+	};
+	webSocket.onopen = function() {
+		alert("D");
+		webSocket.onmessage = function(event) {
+			var show = document.getElementById('show');
+			show.innerHTML += event.data + "<br/>";
+			show.scrollTop = show.scrollHeight;
+		}
+		document.getElementById('msg').onkeydown = send;
+		document.getElementById('sendBn').onclick = sendMsg;
+		alert("Bounded!");
+	};
+	webSocket.onclose = function() {
+		alert("E");
+		document.getElementById('msg').onkeydown = null;
+		document.getElementById('sendBn').onclick = null;
+		alert("WebSocket has been closed");
+	};
+</script>
+</head>
+<body>
+	<div
+		style="width: 600px; height: 240px; overflow-y: auto; border: 1px solid #333;"
+		id="show"></div>
+	<input type="text" size="80" id="msg" name="msg"
+		placeholder="Type in chat message here" />
+	<input type="button" value="Send" id="sendBn" name="sendBn" />
+</body>
+</html>
